@@ -1,0 +1,10 @@
+pyrogram
+tgcrypto
+configparser
+pyautogui
+pillow
+requests
+beautifulsoup4
+stegano
+cryptography
+pillow
