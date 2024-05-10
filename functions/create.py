@@ -132,8 +132,10 @@ def client(name_sess):
                          'username': functions.config_proxy[section]['LOGIN'],
                          'password': functions.config_proxy[section]['PASSWORD'],
                          'scheme': functions.config_proxy[section]['CONNECTION_TYPE']
-                         } if functions.config_proxy.has_section('DEFAULTIO') and functions.config_proxy['DEFAULTIO'][
-                      'MAIN'] != '' else None)
+                         } if (functions.config_proxy.has_section('DEFAULTIO')
+                               and functions.config_proxy.has_option('DEFAULTIO', 'MAIN')
+                               and functions.config_proxy['DEFAULTIO'][
+                                   'MAIN'] != '') else None)
 
 
 def progress_bar(master=None, **kwargs):

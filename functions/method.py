@@ -54,5 +54,3 @@ def first_chars(string, limit=20):
     return r + dots
 
 
-def get_value_from_brackets(string: str, index: int):
-    c1 = 0
