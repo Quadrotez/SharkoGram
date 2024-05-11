@@ -24,5 +24,5 @@ def send_text(m_c_id, l_string=None, app=None):
         return
 
     time.sleep(int(get_value_from_brackets(l_string, 3))) if get_value_from_brackets(l_string, 3) else ''
-
+    print(m_c_id, l_string)
     return app.send_message(chat_id=m_c_id, text=get_value_from_brackets(l_string, 2))

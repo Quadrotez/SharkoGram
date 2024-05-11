@@ -25,6 +25,12 @@ def run(strings: tuple | list, app: Client):
     reflex_dict = dict({})
     counter = 0
     for string in strings:
+        commands = {
+            'reply_text': lambda m_id, m_c_id, l_string=string: reflex.commands_executors.reply_text(m_id, m_c_id,
+                                                                                                     l_string,
+                                                                                                     app),
+            'send_text': lambda m_id, m_c_id, l_string=string: reflex.commands_executors.send_text(m_c_id, l_string,
+                                                                                                   app)}
         string: str
         counter += 1
         if not string or string[0] == '#':
@@ -33,20 +39,9 @@ def run(strings: tuple | list, app: Client):
         elif reflex.methods.get_word(string, 1) == 'print':
             _print(' '.join(string.split(' ')[1:]), ('session', 'session'))
 
-        elif reflex.methods.get_word(string, 1) == 'connect':
-            app.connect()
-
-        elif reflex.methods.get_word(string, 1) == 'disconnect':
-            app.disconnect()
-
         elif reflex.methods.get_word(string, 1) == 'reflex_on_text':
 
-            commands = {
-                'reply_text': lambda m_id, m_c_id, l_string=string: reflex.commands_executors.reply_text(m_id, m_c_id,
-                                                                                                         l_string,
-                                                                                                         app),
-                'send_text': lambda m_id, m_c_id, l_string=string: reflex.commands_executors.send_text(m_c_id, l_string,
-                                                                                                       app)}
+
 
 
 
@@ -69,6 +64,7 @@ def run(strings: tuple | list, app: Client):
                     pass
 
             app.run()
+
 
 
         else:
