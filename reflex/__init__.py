@@ -1,5 +1,7 @@
 import reflex.errors
 import reflex.interpretator
+import reflex.commands_executors
+import reflex.methods
 
 
 class Reflex:
