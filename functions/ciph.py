@@ -7,9 +7,8 @@ path = None
 
 
 def encrypt(text, key):
-    response = requests.get('https://source.unsplash.com/random/200x300')
     with open(f'{path}/stego_cache/base.png', 'wb') as file:
-        file.write(response.content)
+        file.write(requests.get('https://source.unsplash.com/random/200x300').content)
     try:
         secret = lsb.hide(f'{path}/stego_cache/base.png',
                           str(Fernet(bytes(key[2:-1], 'utf-8')).encrypt(text.encode('UTF-8'))),

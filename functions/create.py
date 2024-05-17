@@ -30,7 +30,9 @@ style = {
         {
             'bg': '#141414',
             'fg': '#c9c9c9',
-            'font': ('Terminal', 10)
+            'font': ('Terminal', 10),
+            'width': 150,
+            'height': 60
         },
 
     'frame':
@@ -89,14 +91,14 @@ def local_destroy(*args):
     [j.destroy() for j in result]
 
 
-def scroll_slider(args_for_frame: dict = None, width_canvas=200,
+def scroll_slider(master=None, args_for_frame: dict = None, width_canvas=200,
                   height_canvas=200, bg='#1a1a1a',
-                  side=None):
-    if args_for_frame and args_for_frame['master']:
+                  side=None, bind=True):
+    if args_for_frame and args_for_frame['master'] and not master:
 
         root = args_for_frame['master']
     else:
-        root = None
+        root = master if master else None
 
     frame = tk.Frame(root, width=1, height=200, bg=bg)
     frame.pack(side=side)
@@ -118,6 +120,9 @@ def scroll_slider(args_for_frame: dict = None, width_canvas=200,
         canvas.configure(scrollregion=canvas.bbox("all"))
 
     inner_frame.bind("<Configure>", on_frame_configure)
+
+    root.bind_all("<MouseWheel>", lambda e: canvas.yview_scroll(-1 * int((e.delta / 120)), "units")
+                  ) if bind else None
 
     return inner_frame, scrollbar, canvas, frame
 

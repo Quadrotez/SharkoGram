@@ -1,5 +1,6 @@
 import functions
 
+
 def button_text_recent_messages(i):
     return ((((f'{i.chat.first_name}{" " + i.chat.last_name if i.chat.last_name else ""}\n'
                f'{i.chat.username if i.chat.username else ""}') if i.chat.first_name else (i.chat.title if i.chat.title

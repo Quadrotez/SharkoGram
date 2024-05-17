@@ -5,7 +5,7 @@ import PIL
 import cryptography.fernet
 import pyrogram.errors.exceptions.all
 from pyrogram import Client, types
-
+import pyrogram.errors.exceptions.not_acceptable_406
 import functions
 import window
 from functions import data, ciph
@@ -70,17 +70,22 @@ def main_menu(root: tk.Tk, label_notification: tk.Button = None):
 
     def recent_messages_list():
         functions.create.local_destroy(recent_messages)
-        for i in app.get_dialogs():
-            button = functions.create.button(master=frame_recent_messages_slider[0],
-                                             text=functions.gen_long_strings.button_text_recent_messages(i),
-                                             font=('Arial', 15),
-                                             wraplength=frame_recent_messages_slider[0].winfo_vrootwidth() // 5,
-                                             command=lambda name=i.chat.id:
-                                             (functions.create.local_destroy(local_destroy),
-                                              root.unbind('<Return>'),
-                                              select_contact(name, app, root, label_name=label_name)))
-            button.pack()
-            recent_messages.append(button)
+        try:
+            for i in app.get_dialogs():
+                button = functions.create.button(master=frame_recent_messages_slider[0],
+                                                 text=functions.gen_long_strings.button_text_recent_messages(i),
+                                                 font=('Arial', 15),
+                                                 wraplength=frame_recent_messages_slider[0].winfo_vrootwidth() // 5,
+                                                 command=lambda name=i.chat.id:
+                                                 (functions.create.local_destroy(local_destroy),
+                                                  root.unbind('<Return>'),
+                                                  select_contact(name, app, root, label_name=label_name)))
+                button.pack()
+                recent_messages.append(button)
+        except pyrogram.errors.exceptions.not_acceptable_406.ChannelPrivate:
+            (l_something_went_wrong := functions.create.label(master=frame_recent_messages_slider[0],
+                                                              text='Что-то пошло не так...')).pack()
+            recent_messages.append(l_something_went_wrong)
 
     def contacts_list():
         functions.create.local_destroy(contacts)
@@ -210,20 +215,7 @@ def select_contact(name: int, app: Client, root: tk.Tk, label_name=None):
 
     (button_main_menu := functions.create.button(text='В главное меню', command=lambda: (app.disconnect(),
                                                                                          functions.create.local_destroy(
-                                                                                             slider_messages,
-                                                                                             frame,
-                                                                                             scrollbar,
-                                                                                             button_main_menu,
-                                                                                             entry_message,
-                                                                                             toggle_encrypt,
-                                                                                             label_entry_key,
-                                                                                             entry_key,
-                                                                                             button_generate_key,
-                                                                                             button_update,
-                                                                                             button_send_message,
-                                                                                             label_name if label_name
-                                                                                             else None,
-                                                                                             b_add_key_to_default),
+                                                                                             local_destroy),
                                                                                          root.unbind('<Return>'),
                                                                                          main_menu(root)))).pack(
         anchor='ne', side=tk.LEFT)
@@ -364,3 +356,7 @@ def select_contact(name: int, app: Client, root: tk.Tk, label_name=None):
 
     if functions.config.has_option('GENERAL', 'KEY'):
         insert_default_key(force=True)
+
+    local_destroy = (slider_messages, frame, scrollbar, button_main_menu, entry_message, toggle_encrypt,
+                     label_entry_key, entry_key, button_generate_key, button_update, button_send_message,
+                     label_name if label_name else None, b_add_key_to_default, l_name_interlocutor)

@@ -63,10 +63,8 @@ def run(root: tk.Tk, b_create_sess: tk.Button):
                 root.update()
 
             ready = tk.IntVar(value=0)
-            b_ready = tk.Button(text='Готово', background="#242424",
-                                foreground="white", font=('Arial', 10),
-                                command=ready_to_save_api_id_and_api_hash)
-            b_ready.pack()
+            (b_ready := tk.Button(text='Готово', background="#242424", foreground="white", font=('Arial', 10),
+                                  command=ready_to_save_api_id_and_api_hash)).pack()
 
             root.wait_variable(ready)
 
@@ -74,22 +72,18 @@ def run(root: tk.Tk, b_create_sess: tk.Button):
 
     def get_phone_and_name_data():
         # Определение имени сессии
-        LabelNameSess = tk.Label(text='Введите имя для вашей сессии')
-        LabelNameSess.pack(pady=(50, 0))
-        EntryNameSess = tk.Entry()
-        EntryNameSess.pack()
+        (LabelNameSess := tk.Label(text='Введите имя для вашей сессии')).pack(pady=(50, 0))
+        (EntryNameSess := tk.Entry()).pack()
 
         # Определение номера телефона
-        LabelPhoneNumber = tk.Label(text='Введите ваш номер телефона')
-        LabelPhoneNumber.pack(pady=(50, 0))
-        EntryPhoneNumber = tk.Entry()
-        EntryPhoneNumber.pack()
+        (LabelPhoneNumber := tk.Label(text='Введите ваш номер телефона')).pack(pady=(50, 0))
+        (EntryPhoneNumber := tk.Entry()).pack()
 
         def check_name():
             if len(EntryNameSess.get()) != 0:
                 LabelNameSess.configure(text='Всё ок')
-                return 1
-            return 0
+                return True
+            return
 
         def check_phone():
 
@@ -100,14 +94,12 @@ def run(root: tk.Tk, b_create_sess: tk.Button):
 
         ready = tk.IntVar(value=0)
 
-        l_country_icon = functions.create.label(master=root, bg=dynamic_config.bg)
-        l_country_icon.pack(before=EntryPhoneNumber)
+        (l_country_icon := functions.create.label(master=root, bg=dynamic_config.bg)).pack(before=EntryPhoneNumber)
 
         while True:
             if functions.method.get_image_country(EntryPhoneNumber.get()):
                 image = Image.open(functions.method.get_image_country(EntryPhoneNumber.get()))
-                image = image.resize((image.width // 5, image.height // 5))
-                photo = ImageTk.PhotoImage(image)
+                photo = ImageTk.PhotoImage(image.resize((image.width // 5, image.height // 5)))
 
                 l_country_icon.configure(image=photo)
 
@@ -118,10 +110,8 @@ def run(root: tk.Tk, b_create_sess: tk.Button):
                 break
             root.update()
 
-        bReady = tk.Button(text='Готово', background="#242424",
-                           foreground="white", font=('Arial', 10),
-                           command=lambda: ready.set(1))
-        bReady.pack()
+        (bReady := tk.Button(text='Готово', background="#242424", foreground="white", font=('Arial', 10),
+                             command=lambda: ready.set(1))).pack()
 
         root.wait_variable(ready)
 
@@ -163,19 +153,15 @@ def run(root: tk.Tk, b_create_sess: tk.Button):
 
         while True:
             try:
-                LabelCodeWasSent = tk.Label(text='Код был выслан!')
-                LabelCodeWasSent.pack()
-                EntryYourCode = tk.Entry()
-                EntryYourCode.pack()
-                bReady = tk.Button(text='Готово', background="#242424",
-                                   foreground="white", font=('Arial', 10), command=lambda: ready.set(1))
-                bReady.pack()
+                (LabelCodeWasSent := tk.Label(text='Код был выслан!')).pack()
+                (EntryYourCode := tk.Entry()).pack()
+                (bReady := tk.Button(text='Готово', background="#242424",
+                                     foreground="white", font=('Arial', 10), command=lambda: ready.set(1))).pack()
                 ready = tk.IntVar(value=0)
 
                 root.wait_variable(ready)
                 code = EntryYourCode.get()
                 app.sign_in(phone, sent_code_info, code)
-
                 break
             except pyrogram.errors.exceptions.bad_request_400.PhoneCodeInvalid:
                 if 'LabelCodeIsInvalid' in locals():
@@ -194,22 +180,20 @@ def run(root: tk.Tk, b_create_sess: tk.Button):
 
     except pyrogram.errors.exceptions.unauthorized_401.SessionPasswordNeeded:
         (LabelPasswordRequired := tk.Label(text='У вас есть пароль! Введите его')).pack()
-        EntryPassword = tk.Entry()
-        EntryPassword.pack()
+        (EntryPassword := tk.Entry()).pack()
 
-        LabelPasswordIsInvalid = tk.Label(text='Пароль неверный')
-        bReady = tk.Button(text='Готово', background="#242424",
-                           foreground="white", font=('Arial', 10), command=lambda: ready.set(1))
-        bReady.pack()
+
+        (bReady := tk.Button(text='Готово', background="#242424", foreground="white", font=('Arial', 10),
+                             command=lambda: ready.set(1))).pack()
         while True:
             try:
                 ready = tk.IntVar(value=0)
-                LabelPasswordIsInvalid.destroy()
                 root.wait_variable(ready)
                 app.check_password(EntryPassword.get())
                 break
             except pyrogram.errors.exceptions.bad_request_400.PasswordHashInvalid:
                 (LabelPasswordIsInvalid := tk.Label(text='Пароль неверный')).pack()
+                root.after(2000, LabelPasswordIsInvalid.destroy())
 
     (LabelCodeSuccess := tk.Label(text='Успешно!')).pack()
     app.disconnect()

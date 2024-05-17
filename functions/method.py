@@ -27,7 +27,8 @@ class Sessions:
 def get_image_country(code):
     for i in list(reversed(sorted([i[0] for i in tuple(cursor.execute('SELECT PHONE_CODE FROM COUNTRIES'))]))):
         if code[1:].startswith(str(i)):
-            return f"images/flags/{tuple(cursor.execute('SELECT COUNTRY_CODE FROM COUNTRIES WHERE PHONE_CODE = ?', (i,)))[0][0]}.png"
+            return f"images/flags/{tuple(cursor.execute('SELECT COUNTRY_CODE FROM COUNTRIES WHERE PHONE_CODE = ?',
+                                                        (i,)))[0][0]}.png"
 
     return False
 
@@ -54,3 +55,5 @@ def first_chars(string, limit=20):
     return r + dots
 
 
+def mkdir_weakly(*paths):
+    [os.mkdir(i) for i in paths if not os.path.exists(i)]

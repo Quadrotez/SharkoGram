@@ -10,5 +10,6 @@ def add(name, var):
     functions.config_dyn_2['DYN'][str(name)] = str(var)
     save()
 
+
 def get(name):
     return functions.config_dyn_2['DYN'][str(name)]
