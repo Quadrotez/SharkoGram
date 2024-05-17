@@ -220,9 +220,6 @@ def select_contact(name: int, app: Client, root: tk.Tk, label_name=None):
                                                                                          main_menu(root)))).pack(
         anchor='ne', side=tk.LEFT)
 
-    (scrollbar := tk.Scrollbar(root, command=(slider_messages := tk.Canvas(root, bg='#141414')).yview,
-                               bg='#141414')).pack(side="right", fill="y")
-
     toggle_encrypt = tk.Checkbutton(root, text="Зашифровывать/Расшифровывать текст", variable=bool_encrypt)
     toggle_encrypt.pack(anchor='ne')
     label_entry_key = functions.create.label(text='Введите ключ')
@@ -236,15 +233,19 @@ def select_contact(name: int, app: Client, root: tk.Tk, label_name=None):
     button_generate_key.pack(anchor='ne')
 
     (b_add_key_to_default := functions.create.button(text='Запомнить ключ',
-                                                     command=lambda: (functions.config.set('GENERAL', 'KEY',
-                                                                                           entry_key.get()),
-                                                                      functions.config.write(
-                                                                          open(f'{functions.path}/config.ini',
-                                                                               'w',
-                                                                               encoding='UTF-8'))))).pack(anchor='ne')
+                                                     command=lambda:
+                                                     (functions.config.set('GENERAL', 'KEY', entry_key.get()),
+                                                      functions.config.write(open(f'{functions.path}/config.ini', 'w',
+                                                                                  encoding='UTF-8'))))).pack(
+        anchor='ne')
 
-    l_name_interlocutor = functions.create.label(master=root, text=app.get_chat(name).first_name)
-    l_name_interlocutor.pack()
+    (l_name_interlocutor := functions.create.label(master=root,
+                                                   text=functions.gen_long_strings.name_interlocutor(app, name))).pack()
+
+    (scrollbar := tk.Scrollbar(root, command=(slider_messages := tk.Canvas(root, bg='#141414')).yview,
+                               bg='#141414')).pack(side="right", fill="y")
+
+
 
     slider_messages.pack(expand=True, fill='y')
     slider_messages.create_window((0, 0), window=(frame := tk.Frame(slider_messages, bg='#141414')), anchor="ne")
@@ -263,19 +264,19 @@ def select_contact(name: int, app: Client, root: tk.Tk, label_name=None):
         for i in chat_history:
             i: types.Message
             message = functions.create.label(master=frame, local_style='label_message',
-                                             wraplength=frame.winfo_vrootwidth() // 5)
+                                             wraplength=frame.winfo_vrootwidth() // 6)
             if i.document and entry_key.get() != '' and bool_encrypt.get():
                 app.download_media(i.document.file_id, file_name='1.png')
 
                 try:
-                    message.configure(text=f'{"Вы" if i.from_user.id == me.id else i.chat.first_name} (decrypted): '
+                    message.configure(text=f'{functions.gen_long_strings.name_sender_in_chat(i, me)} (encrypted): )'
                                            f'{ciph.decrypt(str(entry_key.get()), local_path="downloads/1.png")}')
                 except cryptography.fernet.InvalidToken:
                     message.configure(text=f'{"Вы" if i.from_user.id == me.id else i.from_user.first_name}: '
                                            f'InvalidFernetToken')
 
                 except PIL.UnidentifiedImageError:
-                    message.configure(text=f'{"Вы" if i.from_user.id == me.id else i.from_user.first_name}: '
+                    message.configure(text=f'{functions.gen_long_strings.name_sender_in_chat(i, me)}: '
                                            f'UnidentifiedImageError')
 
             elif i.text:
@@ -284,11 +285,11 @@ def select_contact(name: int, app: Client, root: tk.Tk, label_name=None):
                                                                             root.clipboard_append(name)))).pack()
                 messages.append(lb)
 
-                message.configure(text=f'{"Вы" if i.from_user.id == me.id else i.from_user.first_name}: {i.text}')
+                message.configure(text=f'{functions.gen_long_strings.name_sender_in_chat(i, me)}: {i.text}')
 
             elif i.photo:
                 message = functions.create.button(master=frame,
-                                                  text=f'{"Вы" if i.from_user.id == me.id else i.from_user.first_name}: '
+                                                  text=f'{functions.gen_long_strings.name_sender_in_chat(i, me)}: '
                                                        f'Фото',
                                                   command=lambda j=i: (
                                                       os.startfile(str(app.download_media(j.photo.file_id,
@@ -298,9 +299,8 @@ def select_contact(name: int, app: Client, root: tk.Tk, label_name=None):
 
             elif i.video:
                 message = functions.create.button(master=frame,
-                                                  text="Вы" if i.from_user and (
-                                                          i.from_user.id == me.id) else i.from_user.first_name + ":"
-                                                                                                                 f'Видео',
+                                                  text=f'{functions.gen_long_strings.name_sender_in_chat(i, me)}: '
+                                                       f'Видео',
                                                   command=lambda j=i: (
                                                       os.startfile(str(app.download_media(j.video.file_id,
                                                                                           file_name='video.mp4'))),
@@ -308,9 +308,8 @@ def select_contact(name: int, app: Client, root: tk.Tk, label_name=None):
 
             elif i.voice:
                 message = functions.create.button(master=frame,
-                                                  text="Вы" if i.from_user and (
-                                                          i.from_user.id == me.id) else i.from_user.first_name + ":"
-                                                                                                                 f'Голосовое сообщение',
+                                                  text=f'{functions.gen_long_strings.name_sender_in_chat(i, me)}: '
+                                                       f'Голосовое сообщение',
                                                   command=lambda j=i: (
                                                       os.startfile(str(app.download_media(j.voice.file_id,
                                                                                           file_name='voice.mp3'))),
@@ -318,10 +317,10 @@ def select_contact(name: int, app: Client, root: tk.Tk, label_name=None):
 
 
             else:
-                message.configure(text=f'{"Вы" if i.from_user.id == me.id else i.chat.first_name}: '
+                message.configure(text=f'{functions.gen_long_strings.name_sender_in_chat(i, me)}: '
                                        f'Неизвестный тип данных')
 
-            (message.pack(), messages.append(message)) if message else ''
+            (message.pack(padx=(20, 0)), messages.append(message)) if message else ''
             (ll := functions.create.label(master=frame, text='_' * 90, bg='#141414', fg='#db51cd')).pack()
             messages.append(ll)
 
@@ -349,7 +348,7 @@ def select_contact(name: int, app: Client, root: tk.Tk, label_name=None):
     (button_send_message := functions.create.button(text='Отправить',
                                                     command=lambda: (root.update(),
                                                                      send_message(entry_message.get()),
-                                                                     [i.destroy() for i in messages],
+                                                                     functions.create.local_destroy(messages),
                                                                      blit_messages(),
                                                                      ))).pack(anchor='sw', side=tk.RIGHT, pady=(0, 50),
                                                                               padx=(0, 50))
@@ -359,4 +358,4 @@ def select_contact(name: int, app: Client, root: tk.Tk, label_name=None):
 
     local_destroy = (slider_messages, frame, scrollbar, button_main_menu, entry_message, toggle_encrypt,
                      label_entry_key, entry_key, button_generate_key, button_update, button_send_message,
-                     label_name if label_name else None, b_add_key_to_default, l_name_interlocutor)
+                     label_name, b_add_key_to_default, l_name_interlocutor)

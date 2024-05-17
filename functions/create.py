@@ -88,7 +88,7 @@ def local_destroy(*args):
 
     [flatten(arg) for arg in args]
 
-    [j.destroy() for j in result]
+    [j.destroy() if j else None for j in result]
 
 
 def scroll_slider(master=None, args_for_frame: dict = None, width_canvas=200,
