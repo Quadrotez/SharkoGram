@@ -243,8 +243,7 @@ def select_contact(name: int, app: Client, root: tk.Tk, label_name=None):
                                                    text=functions.gen_long_strings.name_interlocutor(app, name))).pack()
 
     (scrollbar := tk.Scrollbar(root, command=(slider_messages := tk.Canvas(root, bg='#141414')).yview,
-                               bg='#141414')).pack(side="right", fill="y")
-
+                               bg='#141414')).pack(side="right", fill="y", before=toggle_encrypt)
 
 
     slider_messages.pack(expand=True, fill='y')
