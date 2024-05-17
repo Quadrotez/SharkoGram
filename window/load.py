@@ -271,7 +271,7 @@ def select_contact(name: int, app: Client, root: tk.Tk, label_name=None):
                     message.configure(text=f'{functions.gen_long_strings.name_sender_in_chat(i, me)} (encrypted): )'
                                            f'{ciph.decrypt(str(entry_key.get()), local_path="downloads/1.png")}')
                 except cryptography.fernet.InvalidToken:
-                    message.configure(text=f'{"Вы" if i.from_user.id == me.id else i.from_user.first_name}: '
+                    message.configure(text=f'{functions.gen_long_strings.name_sender_in_chat(i, me)}: '
                                            f'InvalidFernetToken')
 
                 except PIL.UnidentifiedImageError:
