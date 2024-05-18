@@ -36,10 +36,10 @@ def main_menu(root: tk.Tk, label_notification: tk.Button = None):
                                              command=lambda: (add_contact_directly(app),
                                                               ready.set(1)))
 
-    if not app.get_contacts():
+    if not app.get_contacts() and len(app.get_dialogs()) == 0:
         ready = tk.IntVar(value=0)
-        (label_you_dont_have_any_contacts := functions.create.label(text='У вас нет контактов:(\n'
-                                                                         'Но вы можете добавить новые')).pack(pady=(0,
+        (label_you_dont_have_any_contacts := functions.create.label(text='У вас нет контактов и чатов:(\n'
+                                                                         'Добавьте Ваш первый контакт')).pack(pady=(0,
                                                                                                                     10))
         b_add_contacts.pack()
 
@@ -280,8 +280,8 @@ def select_contact(name: int, app: Client, root: tk.Tk, label_name=None):
 
             elif i.text:
                 (lb := functions.create.button(master=frame, text='Скопировать',
-                                               command=lambda name=i.text: (root.clipboard_clear(),
-                                                                            root.clipboard_append(name)))).pack()
+                                               command=lambda j=i.text: (root.clipboard_clear(),
+                                                                         root.clipboard_append(j)))).pack()
                 messages.append(lb)
 
                 message.configure(text=f'{functions.gen_long_strings.name_sender_in_chat(i, me)}: {i.text}')

@@ -27,8 +27,8 @@ class Sessions:
 def get_image_country(code):
     for i in list(reversed(sorted([i[0] for i in tuple(cursor.execute('SELECT PHONE_CODE FROM COUNTRIES'))]))):
         if code[1:].startswith(str(i)):
-            return f"images/flags/{tuple(cursor.execute('SELECT COUNTRY_CODE FROM COUNTRIES WHERE PHONE_CODE = ?',
-                                                        (i,)))[0][0]}.png"
+            return (f"images/flags/" + str(tuple(cursor.execute(
+                'SELECT COUNTRY_CODE FROM COUNTRIES WHERE PHONE_CODE = ?', (i,)))[0][0]) + ".png")
 
     return False
 

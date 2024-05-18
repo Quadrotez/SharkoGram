@@ -43,8 +43,7 @@ style = {
 }
 
 
-# text='Готово', background="",
-#                            foreground="white", font=('Arial', 10), command=lambda: ready.set(1)
+
 def button(master=None, **kwargs):
     button = tk.Button(master=master if master else None)
     button.configure(**style['button'])
