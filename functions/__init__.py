@@ -24,13 +24,11 @@ open(f'{path}/config_dyn.ini', 'w', encoding='UTF-8').write('') if not os.path.e
  (config_dyn_2))
 
 # Создание статического конфига
-open(f'{path}/config.ini', 'w', encoding='UTF-8').write('') if not os.path.exists(
-    f'{path}/config.ini') else None
+open(f'{path}/config.ini', 'w', encoding='UTF-8').write('') if not os.path.exists(f'{path}/config.ini') else None
 (config := ConfigParser()).read(f'{path}/config.ini')
 
 (((lambda c: (c.add_section('GENERAL') if not c.has_section('GENERAL') else '',
-              c.write(open(f'{path}/config.ini', 'w', encoding='UTF-8')))))
- (config))
+              c.write(open(f'{path}/config.ini', 'w', encoding='UTF-8')))))(config))
 
 # Инициализация всех файлов для стеганографии
 (lambda: (functions.method.mkdir_weakly(f'{path}/stego_cache', f'downloads')))()
